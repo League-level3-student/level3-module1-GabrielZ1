@@ -19,7 +19,7 @@ public class GameBoard extends JFrame implements ActionListener {
 	static Card secondSelectedCard = null;
 
 	// 1. Initialize TOTAL_CARDS to 2;
-	static int TOTAL_CARDS = 2;
+	static int TOTAL_CARDS = 52;
 
 	ArrayList<Card> cards;
 
@@ -51,8 +51,9 @@ public class GameBoard extends JFrame implements ActionListener {
 		//    of the Card objects to the ArrayList of Cards.
 
 		for(int i = 0; i<TOTAL_CARDS; i++) {
-			Card card = new Card(1);
+			Card card = new Card(i);
 			card.addActionListener(this);
+			card.setFaceUpIcon(Card.cardImagesPath + (i+1) + ".png");
 			cards.add(card);
 		}
 
@@ -84,9 +85,9 @@ public class GameBoard extends JFrame implements ActionListener {
 	// 9. Fill in the drawCards method to draw all the cards in the ArrayList.
 	//    Run your code and verify 2 cards are displayed and the game works.
 	public void drawCards() {
-
-		//IN PROGRESS
-
+		for(int i = 0; i<TOTAL_CARDS; i++) {
+			cards.get(i).draw();
+		}
 	}
 
 	// 10. 
