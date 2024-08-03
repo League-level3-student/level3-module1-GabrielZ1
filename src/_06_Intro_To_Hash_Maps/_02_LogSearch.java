@@ -2,6 +2,7 @@ package _06_Intro_To_Hash_Maps;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JButton;
@@ -43,6 +44,10 @@ public class _02_LogSearch implements ActionListener {
 	JButton viewListButton = new JButton();
 	JButton removeEntryButton = new JButton();
 
+	ArrayList<String> IDList = new ArrayList<String>();
+	ArrayList<String> namesList = new ArrayList<String>();
+
+
 	public static void main(String[] args) {
 		_02_LogSearch logSearch = new _02_LogSearch();
 		logSearch.run();
@@ -63,7 +68,7 @@ public class _02_LogSearch implements ActionListener {
 		searchByIDButton.setText("Search by ID");
 		viewListButton.setText("View List");
 		removeEntryButton.setText("Remove Entry");
-		
+
 		panel.add(addEntryButton);
 		panel.add(searchByIDButton);
 		panel.add(viewListButton);
@@ -83,23 +88,53 @@ public class _02_LogSearch implements ActionListener {
 
 		if (addEntryButton == buttonClicked) {
 
-			String inputID = JOptionPane.showInputDialog("Enter an ID.");
-			String inputName = JOptionPane.showInputDialog("Enter a name.");
+			String addEntryInputID = JOptionPane.showInputDialog("Enter an ID number.");
 
-			map.put(Integer.valueOf(inputID), inputName);
-			
+			if(map.containsKey(Integer.valueOf(addEntryInputID)) == false) {
+				String addEntryInputName = JOptionPane.showInputDialog("Enter a name.");
+
+				IDList.add(addEntryInputID);
+				namesList.add(addEntryInputName);
+
+				map.put(Integer.valueOf(addEntryInputID), addEntryInputName);
+			}
+
+			else {
+				JOptionPane.showMessageDialog(null, "This ID number already exists.");
+			}
+
+
 		} else if (searchByIDButton == buttonClicked) {
 
-			//in progress
-			
+			String searchInputID = JOptionPane.showInputDialog("Enter an ID number.");
+			if(map.containsKey(Integer.valueOf(searchInputID))) {
+				JOptionPane.showMessageDialog(null, "This ID belongs to " + map.get(Integer.valueOf(searchInputID)));
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Entry does not exist.");
+			}
+
 		} else if (viewListButton == buttonClicked) {
+			String hashMapList = "";
+			for(int i = 0; i<map.size(); i++) {
+				hashMapList += "ID: " + IDList.get(i) + " Name: " + namesList.get(i) + "\n";
+			}
 
-			
-			
+			JOptionPane.showMessageDialog(null, hashMapList);
+
 		} else if (removeEntryButton == buttonClicked) {
+			String removeEntryInputID = JOptionPane.showInputDialog("Enter an ID number.");
 
-			
-			
+			if(map.containsKey(Integer.valueOf(removeEntryInputID))) {
+				IDList.remove(removeEntryInputID);
+				namesList.remove(map.get(Integer.valueOf(removeEntryInputID)));
+				map.remove(Integer.valueOf(removeEntryInputID));
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "This ID number is not in the list");
+
+			}
+
 		}
 
 	}
