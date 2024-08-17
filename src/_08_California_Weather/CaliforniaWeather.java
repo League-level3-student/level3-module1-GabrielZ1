@@ -1,6 +1,13 @@
 package _08_California_Weather;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /*
  * OBJECTIVE:
@@ -27,19 +34,100 @@ import java.util.HashMap;
  * temperature, you can get a free API key at: https://openweathermap.org/api
  */
 
-public class CaliforniaWeather {
-    
-    void start() {
-        HashMap<String, WeatherData> weatherData = Utilities.getWeatherData();
-        
-        // All city keys have the first letter capitalized of each word
-        String cityName = Utilities.capitalizeWords( "National City" );
-        WeatherData datum = weatherData.get(cityName);
-        
-        if( datum == null ) {
-            System.out.println("Unable to find weather data for: " + cityName);
-        } else {
-            System.out.println(cityName + " is " + datum.weatherSummary + " with a temperature of " + datum.temperatureF + " F");
-        }
-    }
+public class CaliforniaWeather implements ActionListener {
+
+	HashMap<String, WeatherData> weatherData = Utilities.getWeatherData();       
+	
+	JFrame frame = new JFrame();
+	JPanel panel = new JPanel();
+	JButton cityButton = new JButton();
+	JButton weatherConditionButton = new JButton();
+	JButton minMaxButton = new JButton();
+
+	void start() {
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		cityButton.addActionListener(this);
+		weatherConditionButton.addActionListener(this);
+		minMaxButton.addActionListener(this);
+
+		frame.setTitle("California Weather");
+
+		cityButton.setText("Enter a city");
+		weatherConditionButton.setText("Enter a weather condition");
+		minMaxButton.setText("Enter a minimum and maximum temperature");
+
+		panel.add(cityButton);
+		panel.add(weatherConditionButton);
+		panel.add(minMaxButton);
+
+		frame.add(panel);
+
+		frame.pack();
+
+		frame.setVisible(true);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+
+		JButton buttonClicked = (JButton)arg0.getSource();
+
+		//button 1 is clicked
+		if(cityButton == buttonClicked) {
+			
+			// All city keys have the first letter capitalized of each word
+
+			String cityInput = JOptionPane.showInputDialog("Enter a city in California.");
+
+			String cityName = Utilities.capitalizeWords(cityInput);
+			WeatherData datum = weatherData.get(cityName);
+
+			if( datum == null ) {
+				JOptionPane.showMessageDialog(null, "Unable to find weather data for: " + cityName);
+			} else {
+				JOptionPane.showMessageDialog(null, cityName + " is " + datum.weatherSummary + " with a temperature of " + datum.temperatureF + " F");
+			}
+
+		}
+
+		//button 2 is clicked
+		else if(weatherConditionButton == buttonClicked) {
+
+			String weatherConditionInput = JOptionPane.showInputDialog("Enter a weather condition.");
+
+			String citiesWithGivenConditionList = "";
+			 for(String i : weatherData.keySet()){
+				if(weatherData.get(i).weatherSummary.equalsIgnoreCase(weatherConditionInput)) {
+				citiesWithGivenConditionList += i + "\n";
+				}
+			}
+
+			JOptionPane.showMessageDialog(null, citiesWithGivenConditionList);
+			
+		}
+		
+		//button 3 is clicked
+		else {
+			
+			String minTempInput = JOptionPane.showInputDialog("Enter a minimum temperature.");
+			String maxTempInput = JOptionPane.showInputDialog("Enter a maximum temperature.");
+
+			String citiesWithTempInRangeList = "";
+			 for(String i : weatherData.keySet()){
+				 System.out.println("j");
+				if(weatherData.get(i).temperatureF >= Integer.parseInt(minTempInput) && weatherData.get(i).temperatureF <= Integer.parseInt(maxTempInput)) {
+				citiesWithTempInRangeList += i + "\n";
+				}
+			}
+
+			JOptionPane.showMessageDialog(null, citiesWithTempInRangeList);
+			
+		}
+	}
+
+
 }
