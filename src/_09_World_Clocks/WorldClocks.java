@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.TimeZone;
 
 import javax.swing.JButton;
@@ -43,48 +44,37 @@ import _08_California_Weather.WeatherData;
 public class WorldClocks implements ActionListener {
     ClockUtilities clockUtil;
     Timer timer;
-    TimeZone timeZone;
 
     JFrame frame;
     JPanel panel;
     JTextArea textArea;
     JButton addCityButton;
     
-    String city;
-    String dateStr;
-    String timeStr;
+	HashMap<String, TimeZone> worldClocks = new HashMap<String, TimeZone>();
     
     public WorldClocks() {
-    	
-    	HashMap<String, TimeZone> worldClocks = new HashMap<String, TimeZone>();   
-    	
+    	    	
         clockUtil = new ClockUtilities();
 
         // The format for the city must be: city, country (all caps)
-        String city = JOptionPane.showInputDialog("Enter a city and country in the following format (US for United States): \"City, Country\"");
-        timeZone = clockUtil.getTimeZoneFromCityName(city);
         
-        Calendar calendar = Calendar.getInstance(timeZone);
-        String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
-        String dayOfWeek = calendar.getDisplayName( Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
-        dateStr = dayOfWeek + " " + month + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.YEAR);
-        
-        System.out.println(dateStr);
 
         // Sample starter program
         frame = new JFrame();
         panel = new JPanel();
         textArea = new JTextArea();
+        textArea.setEditable(false);
+        addCityButton = new JButton();
+        addCityButton.setText("Add a City");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
         frame.setSize(100, 100);
-        frame.add(panel);
         panel.add(textArea);
-        //panel.add(addCityButton);
-        //addCityButton.setText("Add City");
-        //addCityButton.addActionListener(this);
-        textArea.setText(city + "\n" + dateStr);
-    
+        panel.add(addCityButton);
+        addCityButton.setText("Add City");
+        addCityButton.addActionListener(this);
+        frame.add(panel);
+        
+        frame.setVisible(true);
         
         // This Timer object is set to call the actionPerformed() method every
         // 1000 milliseconds
@@ -94,25 +84,33 @@ public class WorldClocks implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-//        if((JButton)arg0.getSource() == addCityButton) {
-//        	String city = JOptionPane.showInputDialog("Enter a city and country in the following format (US for United States): \"City, Country\"");
-//            timeZone = clockUtil.getTimeZoneFromCityName(city);
-//            
-//            Calendar calendar = Calendar.getInstance(timeZone);
-//            String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
-//            String dayOfWeek = calendar.getDisplayName( Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
-//            dateStr = dayOfWeek + " " + month + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.YEAR);
-//            
-//            System.out.println(dateStr);
-//        }
-    	
-    	Calendar c = Calendar.getInstance(timeZone);
-        String militaryTime = c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE) + ":" + c.get(Calendar.SECOND);
-        String twelveHourTime = " [" + c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE) + ":" + c.get(Calendar.SECOND) + "]";
-        timeStr = militaryTime + twelveHourTime;
-        
-        System.out.println(timeStr);
-        textArea.setText(city + "\n" + dateStr + "\n" + timeStr);
-        frame.pack();
+        if(arg0.getSource() instanceof JButton) {
+        	String city = JOptionPane.showInputDialog("Enter a city and country in the following format (US for United States): \"City, Country\"");
+            TimeZone timeZone = clockUtil.getTimeZoneFromCityName(city);
+            worldClocks.put(city, timeZone);
+           
+        }
+        else {
+        	  String toSetText = "";
+        	  
+        	for(Entry<String, TimeZone> entry: worldClocks.entrySet()) {
+        		Calendar calendar = Calendar.getInstance(entry.getValue());
+                String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+                String dayOfWeek = calendar.getDisplayName( Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+                String dateStr = dayOfWeek + " " + month + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.YEAR);     
+
+                Calendar c = Calendar.getInstance(entry.getValue());
+                String militaryTime = c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE) + ":" + c.get(Calendar.SECOND);
+                String twelveHourTime = " [" + c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE) + ":" + c.get(Calendar.SECOND) + "]";
+                String timeStr = militaryTime + twelveHourTime;
+                
+                toSetText += (entry.getKey() + "\n" + dateStr + "\n" + timeStr + "\n" + "\n");
+                
+        	}
+        	textArea.setText(toSetText);
+        	frame.pack();
+        	
+        	
+        }
     }
 }
